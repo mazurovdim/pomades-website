@@ -1,0 +1,16 @@
+@import "reset";
+@import "vars";
+@import "mixins";
+@import "fonts";
+
+@import "./components/header";
+
+.main{
+    p{
+        font-size: 20px;
+        font-family: "Muller";
+        @include flex-all-center;
+        font-weight: 400px;
+    }
+    
+}

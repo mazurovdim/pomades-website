@@ -8,11 +8,12 @@ import gulpSourcemaps from 'gulp-sourcemaps'
 import sass from 'sass'
 import gulpSass from 'gulp-sass'
 import typograf from 'gulp-typograf'
+import autoPrefixer from 'gulp-autoprefixer'
 const mainSass = gulpSass(sass);
 
 const paths = {
     styles: {
-      src: 'src/scss**/*.scss',
+      src: 'src/scss/**/*.scss',
       dest: 'dist/build/'
     },
     scripts: {
@@ -62,6 +63,20 @@ export const clean = () => {
   return deleteAsync(['dist/build/'])
 }
 
+//CSS
+
+export const styles = () => {
+  return gulp.src('src/scss/main.scss', {sourcemaps:true})
+    .pipe(mainSass())
+    .pipe(autoPrefixer({
+      cascade: false,
+      grid: true,
+      overrideBrowserslist: ["last 5 versions"]
+    }))
+    .pipe(gulp.dest(paths.styles.dest),{sourcemaps:'.'})
+    .pipe(browserSync.stream());
+} 
+
 // Watcher
 
 export const watchFiles = () => {
@@ -72,6 +87,7 @@ export const watchFiles = () => {
     });
     gulp.watch([paths.html.partials, paths.html.src], htmlInclude)
     gulp.watch([`${paths.resourses.src}`], { events: 'all' }, watchResourses)
+    gulp.watch([paths.styles.src], styles)
 }
 
-export default gulp.series(clean, htmlInclude, resourses, watchFiles)
+export default gulp.series(clean, htmlInclude, styles, resourses, watchFiles)
