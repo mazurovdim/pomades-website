@@ -9,6 +9,7 @@ import sass from 'sass'
 import gulpSass from 'gulp-sass'
 import typograf from 'gulp-typograf'
 import autoPrefixer from 'gulp-autoprefixer'
+import webpackStream from 'webpack-stream'
 const mainSass = gulpSass(sass);
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -66,7 +67,6 @@ export const clean = () => {
 
 export const styles = () => {
   return gulp.src('src/scss/main.scss', {sourcemaps:true})
-
     .pipe(mainSass())
     .pipe(autoPrefixer({
       cascade: false,
@@ -76,6 +76,37 @@ export const styles = () => {
     .pipe(gulp.dest(paths.styles.dest),{sourcemaps:'.'})
     .pipe(browserSync.stream());
 } 
+
+//JS
+
+export const scripts = () =>{
+  return gulp.src(paths.scripts.src)
+    .pipe(webpackStream({
+      mode:'development',
+      output: {
+        filename: 'main.js',
+      },
+      module: {
+        rules: [{
+          test: /\.m?js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/preset-env', {
+                  targets: "defaults"
+                }]
+              ]
+            }
+          }
+        }]
+      },
+      devtool:'source-map'
+    }))
+    .pipe(gulp.dest(paths.scripts.dest))
+    .pipe(browserSync.stream());
+}
 
 // Watcher
 
@@ -88,6 +119,7 @@ export const watchFiles = () => {
     gulp.watch([paths.html.partials, paths.html.src], htmlInclude)
     gulp.watch([`${paths.resourses.src}`], { events: 'all' }, watchResourses)
     gulp.watch([paths.styles.src], styles)
+    gulp.watch([paths.scripts.src], scripts)
 }
 
-export default gulp.series(clean, htmlInclude, styles, resourses, watchFiles)
+export default gulp.series(clean, htmlInclude, styles, resourses, scripts, watchFiles)
