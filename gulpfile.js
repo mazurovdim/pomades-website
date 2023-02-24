@@ -10,7 +10,7 @@ import gulpSass from 'gulp-sass'
 import typograf from 'gulp-typograf'
 import autoPrefixer from 'gulp-autoprefixer'
 const mainSass = gulpSass(sass);
-const build = true
+const isProduction = process.env.NODE_ENV === 'production'
 
 const paths = {
     styles: {
