@@ -10,24 +10,25 @@ import gulpSass from 'gulp-sass'
 import typograf from 'gulp-typograf'
 import autoPrefixer from 'gulp-autoprefixer'
 const mainSass = gulpSass(sass);
+const build = true
 
 const paths = {
     styles: {
       src: 'src/scss/**/*.scss',
-      dest: 'dist/build/'
+      dest: 'dist/'
     },
     scripts: {
       src: 'src/js/**/*.js',
-      dest: 'dist/build/'
+      dest: 'dist/'
     },
     html: {
         partials:'src/partials/*.html',
         src: 'src/index.html',
-        dest: 'dist/build/'
+        dest: 'dist/'
       },
       resourses: {
-        src: 'src/resourses/',
-        dest: 'dist/build/resourses/'
+        src: 'public/',
+        dest: 'dist/'
       },
   };
 
@@ -48,25 +49,24 @@ export const watchResourses = () =>{
 
 export const htmlInclude = () => {
   return gulp.src(paths.html.src)
-        .pipe(gulpSourcemaps.init())
         .pipe(gulpFileInclude({
             prefix: '@@',
             basepath: '@file'
           }))
         .pipe(typograf({ locale: ['ru', 'en-US'] }))
-        .pipe(gulpSourcemaps.write())
         .pipe(gulp.dest(paths.html.dest))
         .pipe(browserSync.stream())
 }
 
 export const clean = () => {
-  return deleteAsync(['dist/build/'])
+  return deleteAsync(['dist/'])
 }
 
 //CSS
 
 export const styles = () => {
   return gulp.src('src/scss/main.scss', {sourcemaps:true})
+
     .pipe(mainSass())
     .pipe(autoPrefixer({
       cascade: false,
@@ -82,7 +82,7 @@ export const styles = () => {
 export const watchFiles = () => {
     browserSync.init({
       server: {
-        baseDir: `dist/build/`
+        baseDir: `dist/`
       },
     });
     gulp.watch([paths.html.partials, paths.html.src], htmlInclude)

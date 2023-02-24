@@ -2,6 +2,9 @@
 @import "vars";
 @import "mixins";
 @import "fonts";
+@import "../../node_modules/swiper/swiper-bundle";
+
+//-----------------------------------------------
 
 @import "./components/header";
 
@@ -12,5 +15,4 @@
         @include flex-all-center;
         font-weight: 400px;
     }
-    
 }

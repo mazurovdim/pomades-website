@@ -19,5 +19,8 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-typograf": "^4.0.3",
     "sass": "^1.58.3"
+  },
+  "dependencies": {
+    "swiper": "^9.0.5"
   }
 }
