@@ -9,7 +9,14 @@ import sass from 'sass'
 import gulpSass from 'gulp-sass'
 import typograf from 'gulp-typograf'
 import autoPrefixer from 'gulp-autoprefixer'
-import webpackStream from 'webpack-stream'
+import imagemin from 'gulp-imagemin'
+import mozjpeg from 'imagemin-mozjpeg'
+import optipng  from 'imagemin-optipng'
+import webp from 'gulp-webp'
+import htmlmin from 'gulp-htmlmin'
+import gulpIf from 'gulp-if'
+import jsUglify from 'gulp-uglify'
+import minify from 'gulp-minify'
 const mainSass = gulpSass(sass);
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -55,6 +62,7 @@ export const htmlInclude = () => {
             basepath: '@file'
           }))
         .pipe(typograf({ locale: ['ru', 'en-US'] }))
+        .pipe(gulpIf(isProduction, htmlmin()))
         .pipe(gulp.dest(paths.html.dest))
         .pipe(browserSync.stream())
 }
@@ -67,7 +75,7 @@ export const clean = () => {
 
 export const styles = () => {
   return gulp.src('src/scss/main.scss', {sourcemaps:true})
-    .pipe(mainSass())
+    .pipe(mainSass({ outputStyle: isProduction? 'compressed' : 'expanded'}))
     .pipe(autoPrefixer({
       cascade: false,
       grid: true,
@@ -79,33 +87,30 @@ export const styles = () => {
 
 //JS
 
-export const scripts = () =>{
+export const scripts = () => {
   return gulp.src(paths.scripts.src)
-    .pipe(webpackStream({
-      mode:'development',
-      output: {
-        filename: 'main.js',
+    .pipe(gulpIf(isProduction, minify({
+      ext:{
+          min:'.js'
       },
-      module: {
-        rules: [{
-          test: /\.m?js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                ['@babel/preset-env', {
-                  targets: "defaults"
-                }]
-              ]
-            }
-          }
-        }]
-      },
-      devtool:'source-map'
-    }))
+      noSource:true
+    })))
     .pipe(gulp.dest(paths.scripts.dest))
-    .pipe(browserSync.stream());
+    .pipe(browserSync.stream())
+}
+
+//Images 
+
+export const images = () => {
+  return gulp.src('./public/assets/images/**.{jpg,jpeg,png}')
+    .pipe(webp())
+    .pipe(gulp.dest('./dist/assets/images/'))
+    .pipe(gulp.src('./public/assets/images/**.{jpg,jpeg,png,svg}'))
+    .pipe(imagemin([
+      mozjpeg({quality: 75, progressive: true}),
+      optipng()
+    ]))
+    .pipe(gulp.dest('./dist/assets/images/'))
 }
 
 // Watcher
@@ -123,3 +128,4 @@ export const watchFiles = () => {
 }
 
 export default gulp.series(clean, htmlInclude, styles, resourses, scripts, watchFiles)
+export const build = gulp.series(clean, resourses, htmlInclude, styles, scripts, images)
