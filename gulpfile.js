@@ -16,6 +16,8 @@ import htmlmin from 'gulp-htmlmin'
 import gulpIf from 'gulp-if'
 import minify from 'gulp-minify'
 import hash from 'gulp-hash-src'
+import replace from 'gulp-replace'
+
 const mainSass = gulpSass(sass);
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -26,12 +28,12 @@ const paths = {
       dest: 'dist/styles/'
     },
     scripts: {
-      src: 'src/scripts/**/*.js',
+      src: 'src/scripts/***.js',
       dest: 'dist/scripts/'
     },
     html: {
-        partials:'src/partials/**/*.html',
-        src: 'src/index.html',
+        partials:'src/partials/**/**/*.html',
+        src: 'src/*.html',
         dest: 'dist/'
       },
     assets: {
@@ -62,11 +64,18 @@ export const htmlInclude = () => {
             prefix: '@@',
             basepath: '@file'
           }))
+        .pipe(replace('maincss', 'styles/main.css'))
         .pipe(typograf({ locale: ['ru', 'en-US'] }))
         .pipe(gulpIf(isProduction, htmlmin()))
-        //.pipe(hash({build_dir:paths.html.dest,src_path:paths.html.src,exts:[".js"]}))
         .pipe(gulp.dest(paths.html.dest))
         .pipe(browserSync.stream())
+      }
+
+export const generateHash = () => {
+  return gulp.src(['dist/*.html'])
+    .pipe(hash({build_dir:'dist',src_path:'styles',exts:[".css"]}))
+    .pipe(hash({build_dir:'dist',src_path:'scripts',exts:[".js"]}))
+    .pipe(gulp.dest(paths.html.dest))
 }
 
 export const clean = () => {
@@ -86,7 +95,6 @@ export const styles = () => {
     .pipe(gulp.dest(paths.styles.dest),{sourcemaps:isProduction? '.' : false})
     .pipe(browserSync.stream());
 } 
-
 //JS
 
 export const scripts = () => {
@@ -105,15 +113,19 @@ export const scripts = () => {
 
 export const images = () => {
   return gulp.src('src/assets/images/**.{jpg,jpeg,png}')
+    .pipe(gulpIf(isProduction, imagesMin()))
     .pipe(webp())
     .pipe(gulp.dest('dist/assets/images/'))
-    .pipe(gulp.src('src/assets/images/**.{jpg,jpeg,png,svg}'))
+  }
+  
+export const imagesMin = () => {
+  return gulp.src('src/assets/images/**.{jpg,jpeg,png,svg}')
     .pipe(imagemin([
       mozjpeg({quality: 75, progressive: true}),
       optipng()
     ]))
     .pipe(gulp.dest('dist/assets/images/'))
-}
+  }
 
 // Watcher
 
@@ -124,10 +136,10 @@ export const watchFiles = () => {
       },
     });
     gulp.watch([paths.html.partials, paths.html.src], htmlInclude)
-    gulp.watch([`${paths.resourses.src}`], { events: 'all' }, watchResourses)
+    gulp.watch([`${paths.assets.src}`], { events: 'all' }, watchResourses)
     gulp.watch([paths.styles.src], styles)
     gulp.watch([paths.scripts.src], scripts)
 }
 
-export default gulp.series(clean, gulp.parallel(htmlInclude, styles, assets, scripts), watchFiles)
-export const build = gulp.series(clean, assets, gulp.parallel(htmlInclude, styles, scripts, images)) 
+export default gulp.series(clean, assets, gulp.parallel(htmlInclude, styles, scripts, images), watchFiles)
+export const build = gulp.series(clean, assets, gulp.parallel(gulp.series(htmlInclude, generateHash), styles, scripts, images)) 

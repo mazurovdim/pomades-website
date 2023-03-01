@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
-@@include('partials/head.html')
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Pomades</title>
+        <link rel="preload" href="../assets/fonts/MullerRegular.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="stylesheet" href="../assets/styles/vendors/swiper-bundle.min.css">
+        <script defer src="../assets/js/vendors/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="maincss">
+        <script defer src="scripts/main.js"></script>
+    </head>
 <body>
-@@include('partials/header.html')
-@@include('partials/main.html')
-@@include('partials/swiper.html')
-@@include('partials/footer.html')
-<script src="./scripts/main.js"></script>
-<script src="./scripts/main.js"></script>
+@@include('partials/index/header.html')
+@@include('partials/index/main.html')
+@@include('partials/index/swiper.html')
+@@include('partials/index/footer.html')
+
 </body>
 </html>

@@ -14,4 +14,6 @@ const swiper = new Swiper('.swiper', {
       prevEl: '.swiper-button-prev',
     }
   });
+
+  console.log(2)
 //# sourceMappingURL=main.js.map
