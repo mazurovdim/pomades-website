@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Pomades</title>
-    <link rel="preload" href="./assets/fonts/MullerRegular.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href=/assets/styles/vendors/swiper-bundle.min.css>
-    <script src="/assets/js/vendors/swiper-bundle.min.js"></script>
-    <link rel="stylesheet" href="main.css">
-    <script defer src="./main.js"></script>
+    <link rel="preload" href="../assets/fonts/MullerRegular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../assets/styles/vendors/swiper-bundle.min.css">
+    <script defer src="../assets/js/vendors/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="../">
+    <script defer src="js/main.js"></script>
 </head>
 <body>
 <header>
@@ -20,10 +20,13 @@
     <h2>Test2</h2>
     <p>fff</p>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi odio architecto corporis odit molestias delectus nam, assumenda fugit expedita facere ratione itaque harum non blanditiis repudiandae animi earum voluptates aliquam.</p>
+    <picture>
+        <source srcset="./assets/images/test.webp" type="image/webp">
+        <source srcset="./assets/images/test.jpeg" type="image/jpeg">
+        <img class="img1" src="./assets/images/test.jpeg" alt="FF">
+    </picture>
+    <picture></picture>
 </main>
-<footer>
-    <span>header testssss</span>
-</header>
 <!-- Slider main container -->
 <div class="swiper">
   <!-- Additional required wrapper -->
@@ -39,5 +42,10 @@
   <div class="swiper-button-prev"></div>
   <div class="swiper-button-next"></div>
 </div>
+<footer>
+    <span>header testssss</span>
+</footer>
+<script src="./js/main.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
