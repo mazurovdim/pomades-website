@@ -73,8 +73,8 @@ export const htmlInclude = () => {
 
 export const generateHash = () => {
   return gulp.src(['dist/*.html'])
-    .pipe(hash({build_dir:'dist',src_path:'styles',exts:[".css"]}))
-    .pipe(hash({build_dir:'dist',src_path:'scripts',exts:[".js"]}))
+    .pipe(hash({build_dir:'scripts',src_path:'scripts',exts:[".css",".js"]}))
+    //.pipe(hash({build_dir:'scripts',src_path:'scripts',exts:[".js"]}))
     .pipe(gulp.dest(paths.html.dest))
 }
 
